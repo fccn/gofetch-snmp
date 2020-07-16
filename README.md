@@ -119,10 +119,10 @@ Hosts:
 
 The application must be provided with the appropriately structured configuration files.
 
+* The `-c` flag indicates the path to the Application configuration file.
+* The `-d` flag indicates the path to the InfluxDB configuration file.
+* The `-h` flag indicates the path to the Devices configuration file.
+
 ```
 gofetch -c config.yml -d db.yml -h hosts.yml
 ```
-
-The `-c` flag indicates the path to the Application configuration file.
-The `-d` flag indicates the path to the InfluxDB configuration file.
-The `-h` flag indicates the path to the Devices configuration file.
