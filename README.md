@@ -35,7 +35,7 @@ Through SNMP it is possible to obtain a series of metrics, by choosing which fea
 | NetworkACL | ✕ | ✓ | ✓ | ✕ | ✕ |
 | NetworkPolicy | ✕ | ✓ | ✕ | ✕ | ✕ |
 | BGPPeers | ✕ | ✓ | ✓ | ✕ | ✕ |
-| CellInfor | ✕ | ✕ | ✕ | ✓ | ✓ |
+| CellInfo | ✕ | ✕ | ✕ | ✓ | ✓ |
 | Memory | ✕ | ✓ | ✓ | ✕ | ✓ |
 | CPU | ✕ | ✓ | ✓ | ✕ | ✓ |
 | Sensors | ✕ | ✓ | ✓ | ✓ | ✓ |
