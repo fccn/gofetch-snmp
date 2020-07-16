@@ -1,0 +1,5 @@
+server: http://my.database.net:8086
+username: myusername
+password: mypassword
+database: mydatabase
+ping: 2

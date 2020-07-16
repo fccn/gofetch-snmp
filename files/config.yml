@@ -1,0 +1,4 @@
+version: v1.1.0
+interval: 1m
+timeout: 55s
+maxroutines: 2
