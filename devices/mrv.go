@@ -4,8 +4,8 @@ package devices
 //-----------------------------------------IMPORTS------------------------------------------
 //------------------------------------------------------------------------------------------
 import (
-	"fccn.pt/glopes/gofetch/data"
-	"fccn.pt/glopes/gofetch/snmp"
+	"github.com/fccn/gofetch/data"
+	"github.com/fccn/gofetch/snmp"
 	"github.com/matryer/runner"
 	g "github.com/soniah/gosnmp"
 )

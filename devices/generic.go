@@ -1,7 +1,7 @@
 package devices
 
 import (
-	"fccn.pt/glopes/gofetch/data"
+	"github.com/fccn/gofetch/data"
 	"github.com/matryer/runner"
 )
 

@@ -1,7 +1,7 @@
 package config
 
 import (
-	. "fccn.pt/glopes/gofetch/log"
+	. "github.com/fccn/gofetch/log"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"

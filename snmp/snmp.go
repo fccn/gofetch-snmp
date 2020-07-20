@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	. "fccn.pt/glopes/gofetch/log"
+	. "github.com/fccn/gofetch/log"
 	g "github.com/soniah/gosnmp"
 )
 

@@ -2,7 +2,7 @@ package data
 
 import (
 	"encoding/json"
-	. "fccn.pt/glopes/gofetch/log"
+	. "github.com/fccn/gofetch/log"
 	"fmt"
 	"io/ioutil"
 	"os"

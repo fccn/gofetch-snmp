@@ -4,7 +4,7 @@ package data
 //-----------------------------------------IMPORTS------------------------------------------
 //------------------------------------------------------------------------------------------
 import (
-	. "fccn.pt/glopes/gofetch/log"
+	. "github.com/fccn/gofetch/log"
 	"fmt"
 	"github.com/influxdata/influxdb1-client/v2"
 	"gopkg.in/yaml.v2"

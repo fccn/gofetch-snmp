@@ -1,8 +1,8 @@
 package data
 
 import (
-	. "fccn.pt/glopes/gofetch/log"
-	"fccn.pt/glopes/gofetch/snmp"
+	. "github.com/fccn/gofetch/log"
+	"github.com/fccn/gofetch/snmp"
 	g "github.com/soniah/gosnmp"
 	"time"
 )

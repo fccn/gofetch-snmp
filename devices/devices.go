@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"fccn.pt/glopes/gofetch/data"
-	. "fccn.pt/glopes/gofetch/log"
-	"fccn.pt/glopes/gofetch/snmp"
-	"fccn.pt/glopes/gofetch/util"
+	"github.com/fccn/gofetch/data"
+	. "github.com/fccn/gofetch/log"
+	"github.com/fccn/gofetch/snmp"
+	"github.com/fccn/gofetch/util"
 	"github.com/matryer/runner"
 	g "github.com/soniah/gosnmp"
 )
