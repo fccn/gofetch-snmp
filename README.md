@@ -10,7 +10,7 @@ Gofetch-SNMP can poll five types of devices:
 
 * The `generic` device is an abstraction that encompasses most network devices, but is limited on the metrics collected.
 * The `ios-xr` device corresponds to a CISCO switch or router with the IOS-XR operating system.
-* The `ìos` device corresponds to a CISCO switch or router with the IOS operating system.
+* The `ios` device corresponds to a CISCO switch or router with the IOS operating system.
 * The `mrv` device corresponds to a MRV-LX console server.
 * The `opengear` device corresponds to an Opengear console server.
 
