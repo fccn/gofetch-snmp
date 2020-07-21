@@ -2,7 +2,7 @@
 
 A software application that collects metrics from network devices through SNMP, exporting them into InfluxDB.
 
-The metrics are collected periodically and simiultaneously from a set of network devices configured by the user.
+The metrics are collected periodically and simultaneously from a set of network devices configured by the user.
 
 ## Devices
 
