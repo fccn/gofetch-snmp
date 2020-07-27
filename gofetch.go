@@ -166,7 +166,7 @@ func main() {
 			}
 
 			//Write Fetched Data To InfluxDB or Disk
-			//writeData()
+			writeData()
 
 			//Collection Control Information
 			DebugLog("Collection Ended")
