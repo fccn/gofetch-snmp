@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fccn/gofetch/data"
-	. "github.com/fccn/gofetch/log"
-	"github.com/fccn/gofetch/snmp"
+	"github.com/fccn/gofetch-snmp/data"
+	. "github.com/fccn/gofetch-snmp/log"
+	"github.com/fccn/gofetch-snmp/snmp"
 	"github.com/matryer/runner"
 	g "github.com/soniah/gosnmp"
 )
@@ -32,6 +32,7 @@ func (d *ios) Init() {
 	//Unsupported Features
 	d.Features.NetworkPolicy = false
 	d.Features.CellInfo = false
+	d.Features.Ntp = false
 
 	if !d.Cancel && (d.Features.Memory || d.Features.Cpu || d.Features.Sensors) {
 		//---------------------------------------OIDs---------------------------------------

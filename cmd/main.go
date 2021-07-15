@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fccn/gofetch/config"
-	"github.com/fccn/gofetch/data"
-	"github.com/fccn/gofetch/devices"
-	. "github.com/fccn/gofetch/log"
+	"github.com/fccn/gofetch-snmp/config"
+	"github.com/fccn/gofetch-snmp/data"
+	"github.com/fccn/gofetch-snmp/devices"
+	. "github.com/fccn/gofetch-snmp/log"
 	"github.com/matryer/runner"
 	"golang.org/x/sync/semaphore"
 	"gopkg.in/yaml.v2"
@@ -53,11 +53,10 @@ func stopAllTasks() {
 	}
 }
 
-func fetchData(host devices.Host, version string) {
+func fetchData(host devices.Host) {
 	//Fetch Data From Device
 	if dev := devices.NewDevice(host); dev != nil {
 		dat := data.NewData()
-		dat.Tags["gofetch_version"] = version
 		fetchedData = append(fetchedData, &dat)
 
 		//Multithreading Sync
@@ -103,21 +102,22 @@ func writeData() {
 func main() {
 	//Get The Flags From The Execution Command
 	var confFile, hostsConfFile, dbConfFile string
-	var debugFlag bool
 	flag.StringVar(&confFile, "c", confFile, "General - Configuration File")
 	flag.StringVar(&hostsConfFile, "h", hostsConfFile, "Hosts - Configuration File")
 	flag.StringVar(&dbConfFile, "d", dbConfFile, "Database - Configuration File")
-	flag.BoolVar(&debugFlag, "debug", false, "Debug Flag")
 	flag.Parse()
 
+	//Get General Configurations Struct
+	conf := config.GetConfigs(confFile)
+
 	//Set Debug Flag On Util Module
-	Debug(debugFlag)
+	Debug(conf.Debug)
 
 	//Configuring Log Output
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	//Alive Acknowledgement
-	DebugLog("GoFetch Loaded!")
+	Log(fmt.Sprintf("GoFetch v%s running", version))
 
 	//Get Hosts' Configurations
 	var hosts devices.Hosts
@@ -131,9 +131,6 @@ func main() {
 
 	//Initialize The InfluxDB Connection
 	data.InfluxInit(dbConfFile)
-
-	//Get General Configurations Struct
-	conf := config.GetConfigs(confFile)
 
 	//Set A Ticker That Defines The Running Interval
 	ticker := time.NewTicker(conf.Interval)
@@ -157,7 +154,7 @@ func main() {
 
 			//Retrieve Data For All Hosts
 			for _, host := range hosts.Hosts {
-				fetchData(host, conf.Version)
+				fetchData(host)
 			}
 
 			//Timeout The Thread After Given Time In Seconds

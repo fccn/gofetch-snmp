@@ -4,8 +4,9 @@ package devices
 //-----------------------------------------IMPORTS------------------------------------------
 //------------------------------------------------------------------------------------------
 import (
+	"strings"
+
 	"github.com/fccn/gofetch-snmp/data"
-	"github.com/fccn/gofetch-snmp/snmp"
 	"github.com/matryer/runner"
 	g "github.com/soniah/gosnmp"
 )
@@ -13,64 +14,53 @@ import (
 //------------------------------------------------------------------------------------------
 //-----------------------------------------STRUCTS------------------------------------------
 //------------------------------------------------------------------------------------------
-type opengear struct {
+type ntp struct {
 	*device //Extends Device Struct
 }
 
 //------------------------------------------------------------------------------------------
 //----------------------------------------FUNCTIONS-----------------------------------------
 //------------------------------------------------------------------------------------------
-func (d *opengear) Init() {
+func (d *ntp) Init() {
 	d.device.Init()
 
 	//Unsupported Features
-	d.Features.Ntp = false
 	d.Features.NetworkAcl = false
 	d.Features.NetworkPolicy = false
 	d.Features.BgpPeers = false
+	d.Features.CellInfo = false
 }
 
-func (d *opengear) Uptime() {
+func (d *ntp) Uptime() {
 	d.device.Uptime()
 }
 
-func (d *opengear) InterfaceCounters() {
+func (d *ntp) InterfaceCounters() {
 	d.device.InterfaceCounters()
 }
 
-func (d *opengear) CellInfo() {
+func (d *ntp) Ntp() {
 	//---------------------------------------OIDs---------------------------------------
-	const ogCellModemEnabled = ".1.3.6.1.4.1.25049.17.17.1.4.1"
-	const ogCellModemConnected = ".1.3.6.1.4.1.25049.17.17.1.5.1"
-	const ogCellModemRegistered = ".1.3.6.1.4.1.25049.17.17.1.7.1"
-	const ogCellModemTower = ".1.3.6.1.4.1.25049.17.17.1.8.1"
-	const ogCellModemRadioTechnology = ".1.3.6.1.4.1.25049.17.17.1.9.1"
-	const ogCellModem3gRssi = ".1.3.6.1.4.1.25049.17.17.1.11.1"
-	const ogCellModem4gRssi = ".1.3.6.1.4.1.25049.17.17.1.12.1"
-	const ogCellModemSessionTime = ".1.3.6.1.4.1.25049.17.17.1.13.1"
-	const ogCellModemSelectedSimCard = ".1.3.6.1.4.1.25049.17.17.1.14.1"
-	const ogCellModemTemperature = ".1.3.6.1.4.1.25049.17.17.1.15.1"
-	const ogCellModemCounter = ".1.3.6.1.4.1.25049.17.17.1.16.1"
-
+	const mbgLtNgNtpStratum = "1.3.6.1.4.1.5597.30.0.2.2"
+	const mbgLtNgNtpRefclockOffset = "1.3.6.1.4.1.5597.30.0.2.4"
+	const mbgLtNgFdmFreq = "1.3.6.1.4.1.5597.30.0.4.1"
+	const mbgLtNgNtpCCTotalRequestsCurrentDay = "1.3.6.1.4.1.5597.30.0.2.8.5"
+	const mbgLtNgNtpCCTotalRequestsLastMinute = "1.3.6.1.4.1.5597.30.0.2.8.7"
+	const mbgLtNgNtpCCTodaysClients = "1.3.6.1.4.1.5597.30.0.2.8.8"
+	//-------------------------------------Entries--------------------------------------
 	entries := data.Entries{
-		{"cell_modem_enabled", ogCellModemEnabled},
-		{"cell_modem_connected", ogCellModemConnected},
-		{"cell_modem_registered", ogCellModemRegistered},
-		{"cell_modem_tower", ogCellModemTower},
-		{"cell_modem_tech", ogCellModemRadioTechnology},
-		{"cell_modem_3g_rssi", ogCellModem3gRssi},
-		{"cell_modem_4g_rssi", ogCellModem4gRssi},
-		{"cell_modem_session_time", ogCellModemSessionTime},
-		{"cell_modem_sim_card", ogCellModemSelectedSimCard},
-		{"cell_modem_temperature", ogCellModemTemperature},
-		{"cell_modem_counter", ogCellModemCounter},
+		{"ntp_stratum", mbgLtNgNtpStratum},
+		{"ntp_clock_offset", mbgLtNgNtpRefclockOffset},
+		{"ntp_frequency", mbgLtNgFdmFreq},
+		{"ntp_requests_current_day", mbgLtNgNtpCCTotalRequestsCurrentDay},
+		{"ntp_requests_last_minute", mbgLtNgNtpCCTotalRequestsLastMinute},
+		{"ntp_clients", mbgLtNgNtpCCTodaysClients},
 	}
-
 	//--------------------------------Result Processing---------------------------------
-	d.AddMetricFieldsFromEntries(CELL, entries)
+	d.AddMetricFieldsFromEntries(NTP, entries)
 }
 
-func (d *opengear) Memory() {
+func (d *ntp) Memory() {
 	//---------------------------------------OIDs---------------------------------------
 	const memTotalReal = ".1.3.6.1.4.1.2021.4.5"
 	const memTotalFree = ".1.3.6.1.4.1.2021.4.11"
@@ -83,7 +73,7 @@ func (d *opengear) Memory() {
 	d.AddMetricFieldsFromEntries(MEMORY, entries)
 }
 
-func (d *opengear) Cpu() {
+func (d *ntp) Cpu() {
 	//---------------------------------------OIDs---------------------------------------
 	const ssCpuRawUser = ".1.3.6.1.4.1.2021.11.50"
 	const ssCpuRawSystem = ".1.3.6.1.4.1.2021.11.52"
@@ -102,33 +92,49 @@ func (d *opengear) Cpu() {
 	d.AddMetricFieldsFromEntries(CPU, entries)
 }
 
-func (d *opengear) Sensors() {
-	if !d.Features.Sensors {
-		return
-	}
+func (d *ntp) Sensors() {
 	//---------------------------------------OIDs---------------------------------------
-	const ogEmdTemperatureName = ".1.3.6.1.4.1.25049.17.9.1.3"
-	const ogEmdTemperatureDescription = ".1.3.6.1.4.1.25049.17.9.1.4"
-	const ogEmdTemperatureValue = ".1.3.6.1.4.1.25049.17.9.1.5"
+	const mbgLtNgSysPsIndex = "1.3.6.1.4.1.5597.30.0.5.0.2.1.1"
+	const mbgLtNgSysPsStatus = "1.3.6.1.4.1.5597.30.0.5.0.2.1.2"
+	const mbgLtNgSysFanIndex = "1.3.6.1.4.1.5597.30.0.5.1.2.1.1"
+	const mbgLtNgSysFanStatus = "1.3.6.1.4.1.5597.30.0.5.1.2.1.2"
+	const mbgLtNgSysFanError = "1.3.6.1.4.1.5597.30.0.5.1.2.1.3"
+	const mbgLtNgSysTempCelsius = "1.3.6.1.4.1.5597.30.0.5.2.1"
 	//-------------------------------------Entries--------------------------------------
-	entries := data.Entries{
-		{"sensor_name", ogEmdTemperatureName},
-		{"sensor_descr", ogEmdTemperatureDescription},
-		{"sensor_value_celsius", ogEmdTemperatureValue},
+	power := data.Entries{
+		{"sensor_status", mbgLtNgSysPsStatus},
+	}
+	fan := data.Entries{
+		{"sensor_status", mbgLtNgSysFanStatus},
+		{"sensor_error", mbgLtNgSysFanError},
+	}
+	temp := data.Entries{
+		{"sensor_value_celsius", mbgLtNgSysTempCelsius},
 	}
 	//--------------------------------Result Processing---------------------------------
 	function := data.Function(func(m data.Metric, entry data.Entry, pdu g.SnmpPDU) {
-		index := snmp.GetIndex(pdu, entry.Oid)
-		switch entry.Oid {
-		case ogEmdTemperatureValue:
-			m.AddField(index, entry.Name, pdu.Value)
-		default:
-			m.AddTag(index, entry.Name, pdu.Value.(string))
-		}
+		split := strings.Split(pdu.Name, ".")
+		index := split[len(split)-4] + "." + split[len(split)-1]
+		m.AddTag(index, "sensor_descr", "Power Supply "+split[len(split)-1])
+		m.AddField(index, entry.Name, pdu.Value)
 	})
-	d.AddDataFromEntries(SENSOR, entries, function)
+	d.AddDataFromEntries(SENSOR, power, function)
+
+	function = data.Function(func(m data.Metric, entry data.Entry, pdu g.SnmpPDU) {
+		split := strings.Split(pdu.Name, ".")
+		index := split[len(split)-4] + "." + split[len(split)-1]
+		m.AddTag(index, "sensor_descr", "Fan "+split[len(split)-1])
+		m.AddField(index, entry.Name, pdu.Value)
+	})
+	d.AddDataFromEntries(SENSOR, fan, function)
+
+	function = data.Function(func(m data.Metric, entry data.Entry, pdu g.SnmpPDU) {
+		m.AddTag("", "sensor_descr", "Temperature")
+		m.AddField("", entry.Name, float64(pdu.Value.(uint)))
+	})
+	d.AddDataFromEntries(SENSOR, temp, function)
 }
 
-func (d *opengear) Fetch(dat *data.Data, s *runner.S) {
+func (d *ntp) Fetch(dat *data.Data, s *runner.S) {
 	d.device.Fetch(dat, s)
 }

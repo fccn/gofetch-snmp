@@ -4,15 +4,14 @@ package devices
 //-----------------------------------------IMPORTS------------------------------------------
 //------------------------------------------------------------------------------------------
 import (
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
 
-	"github.com/fccn/gofetch/data"
-	. "github.com/fccn/gofetch/log"
-	"github.com/fccn/gofetch/snmp"
-	"github.com/fccn/gofetch/util"
+	"github.com/fccn/gofetch-snmp/data"
+	. "github.com/fccn/gofetch-snmp/log"
+	"github.com/fccn/gofetch-snmp/snmp"
+	"github.com/fccn/gofetch-snmp/util"
 	"github.com/matryer/runner"
 	g "github.com/soniah/gosnmp"
 )
@@ -33,6 +32,7 @@ func (d *iosxr) Init() {
 
 	//Unsupported Features
 	d.Features.CellInfo = false
+	d.Features.Ntp = false
 
 	if !d.Cancel && (d.Features.Memory || d.Features.Cpu || d.Features.Sensors) {
 		//---------------------------------------OIDs---------------------------------------
@@ -179,7 +179,6 @@ func (d *iosxr) NetworkPolicy() {
 				if paidopai != "" {
 					policyName = policyName + "." + paidopai
 				}
-				fmt.Println(policyName)
 			}
 
 			//Initialize Tags

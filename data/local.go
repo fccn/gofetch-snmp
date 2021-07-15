@@ -2,17 +2,18 @@ package data
 
 import (
 	"encoding/json"
-	. "github.com/fccn/gofetch/log"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"time"
+
+	. "github.com/fccn/gofetch-snmp/log"
 )
 
 //------------------------------------------------------------------------------------------
 //----------------------------------------FUNCTIONS-----------------------------------------
 //------------------------------------------------------------------------------------------
-func LocalWrite(d []*Data)bool{
+func LocalWrite(d []*Data) bool {
 	//Marshal The Data And Check For Errors
 	if data, err := json.MarshalIndent(d, "", " "); err == nil {
 		//Get The Current Time In Nanoseconds For The File's Name

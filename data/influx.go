@@ -4,12 +4,13 @@ package data
 //-----------------------------------------IMPORTS------------------------------------------
 //------------------------------------------------------------------------------------------
 import (
-	. "github.com/fccn/gofetch/log"
 	"fmt"
-	"github.com/influxdata/influxdb1-client/v2"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"time"
+
+	. "github.com/fccn/gofetch-snmp/log"
+	client "github.com/influxdata/influxdb1-client/v2"
+	"gopkg.in/yaml.v2"
 )
 
 //------------------------------------------------------------------------------------------
@@ -20,7 +21,7 @@ type influx struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	Database string `yaml:"database"`
-	Ping     int 	`yaml:"ping"`
+	Ping     int    `yaml:"ping"`
 }
 
 //------------------------------------------------------------------------------------------
@@ -36,7 +37,7 @@ var c client.Client
 //Creates The InfluxDB Connection And Checks Server
 func InfluxInit(dbConfigFile string) {
 	//Decode The Configurations File To The DB Struct
-	if conf, err := ioutil.ReadFile(dbConfigFile); err == nil{
+	if conf, err := ioutil.ReadFile(dbConfigFile); err == nil {
 		if err := yaml.Unmarshal(conf, &db); err != nil {
 			FatalLog(fmt.Sprintf("Could Not Decode InfluxDB Configuration File: %v", err))
 		}
@@ -46,15 +47,15 @@ func InfluxInit(dbConfigFile string) {
 				Addr:     db.Server,
 				Username: db.Username,
 				Password: db.Password,
-			}); err != nil{
+			}); err != nil {
 			FatalLog(fmt.Sprintf("Could Not Initialize InfluxDB Client: %v", err))
 		}
-	} else{
+	} else {
 		FatalLog(fmt.Sprintf("Could Not Decode InfluxDB Configuration File: %v", err))
 	}
 }
 
-func InfluxTestConnection()bool{
+func InfluxTestConnection() bool {
 	var err error
 	if _, _, err = c.Ping(time.Duration(db.Ping) * time.Second); err != nil {
 		Log(fmt.Sprintf("Could Not Estabilish InfluxDB Connection: %s", err.Error()))
@@ -85,7 +86,7 @@ func InfluxAddPoint(bp client.BatchPoints, name string, tags *map[string]string,
 }
 
 //Writes The Batch Point And Closes The Connection
-func InfluxWriteBatch(bp client.BatchPoints)bool{
+func InfluxWriteBatch(bp client.BatchPoints) bool {
 	var err error
 	if err = c.Write(bp); err != nil {
 		Log(fmt.Sprintf("Could Not Write BatchPoints: %s", err.Error()))

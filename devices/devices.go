@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fccn/gofetch/data"
-	. "github.com/fccn/gofetch/log"
-	"github.com/fccn/gofetch/snmp"
-	"github.com/fccn/gofetch/util"
+	"github.com/fccn/gofetch-snmp/data"
+	. "github.com/fccn/gofetch-snmp/log"
+	"github.com/fccn/gofetch-snmp/snmp"
+	"github.com/fccn/gofetch-snmp/util"
 	"github.com/matryer/runner"
 	g "github.com/soniah/gosnmp"
 )
@@ -23,6 +23,7 @@ const (
 	INTERFACE  = "interface_info"
 	BGP        = "bgp_info"
 	CELL       = "cell_info"
+	NTP        = "ntp_info"
 	MEMORY     = "memory_info"
 	CPU        = "cpu_info"
 	SENSOR     = "sensor_info"
@@ -46,6 +47,8 @@ type Device interface {
 	BgpPeers()
 	//Collect GSM Modem Data
 	CellInfo()
+	//Collect NTP Data
+	Ntp()
 	//Collect Memory Usage Data
 	Memory()
 	//Collect CPU Usage Data
@@ -91,6 +94,7 @@ type features struct {
 	NetworkPolicy     bool `yaml:"NetworkPolicy"`
 	BgpPeers          bool `yaml:"BgpPeers"`
 	CellInfo          bool `yaml:"CellInfo"`
+	Ntp               bool `yaml:"Ntp"`
 	Memory            bool `yaml:"Memory"`
 	Cpu               bool `yaml:"Cpu"`
 	Sensors           bool `yaml:"Sensors"`
@@ -194,6 +198,9 @@ func (d *device) GetSpecific() Device {
 		return &opengear{device: d}
 	case "mrv":
 		return &mrv{device: d}
+	case "ntp":
+		d.Bulk = true
+		return &ntp{device: d}
 	case "junos":
 		//d.Bulk = true
 		return &ios{device: d}
@@ -367,6 +374,7 @@ func (d *device) Fetch(dat *data.Data, s *runner.S) {
 		{"network_policy", d.Features.NetworkPolicy, dev.NetworkPolicy},
 		{"bgp_peers", d.Features.BgpPeers, dev.BgpPeers},
 		{"cell_info", d.Features.CellInfo, dev.CellInfo},
+		{"ntp", d.Features.Ntp, dev.Ntp},
 		{"memory", d.Features.Memory, dev.Memory},
 		{"cpu", d.Features.Cpu, dev.Cpu},
 		{"sensors", d.Features.Sensors, dev.Sensors},
